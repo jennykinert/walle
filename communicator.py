@@ -16,23 +16,26 @@ HEADERS = {"Content-type": "application/json", "Accept": "text/json"}
 class UnexpectedResponse(Exception): pass
 
 class Communicator:
+
     def __init__(self):
         self.mrds = client.HTTPConnection(MRDS_URL)
 
-    def post_speed(angularSpeed,linearSpeed):
-        params = json.dumps({'TargetAngularSpeed':angularSpeed,'TargetLinearSpeed':linearSpeed})
-        self.mrds.request('POST','/lokarria/differentialdrive',params,HEADERS)
+    def post_speed(self, angular_speed, linear_speed):
+        params = json.dumps({'TargetAngularSpeed': angular_speed,
+                             'TargetLinearSpeed':  linear_speed})
+        self.mrds.request('POST', '/lokarria/differentialdrive', params, HEADERS)
         response = self.mrds.getresponse()
         status = response.status
-        #response.close()
+
         if status == 204:
             return response
         else:
             raise UnexpectedResponse(response)
 
-    def get_laser_distance():
+    def get_laser_distance(self):
         self.mrds.request('GET','/lokarria/laser/echoes')
         response = self.mrds.getresponse()
+
         if (response.status == 200):
             laser_data = response.read()
             response.close()
@@ -40,25 +43,26 @@ class Communicator:
         else:
             return response
 
-    def get_laser_angles():
+    def get_laser_angles(self):
         self.mrds.request('GET','/lokarria/laser/properties')
         response = self.mrds.getresponse()
+
         if (response.status == 200):
             laser_data = response.read()
             response.close()
             properties = json.loads(laser_data)
             beam_count = int((properties['EndAngle']-properties['StartAngle'])/properties['AngleIncrement'])
-            a = properties['StartAngle']#+properties['AngleIncrement']
+            a = properties['StartAngle']
             angles = []
-            while a <= properties['EndAngle']:
+            for i in range(beam_count):
                 angles.append(a)
-                a+=pi/180 #properties['AngleIncrement']
-            #angles.append(properties['EndAngle']-properties['AngleIncrement']/2)
+                a += properties['AngleIncrement']
+
             return angles
         else:
             raise UnexpectedResponse(response)
 
-    def get_position():
+    def get_position(self):
         self.mrds.request('GET','/lokarria/localization')
         response = self.mrds.getresponse()
         if (response.status == 200):
