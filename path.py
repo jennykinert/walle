@@ -18,6 +18,6 @@ class Path:
         Returns a specific position on the path
         """
         position = self.information[n]
-        x = position["Pose"]["Position"]["X"]
-        y = position["Pose"]["Position"]["Y"]
+        x = position['Pose']['Position']['X']
+        y = position['Pose']['Position']['Y']
         return x,y

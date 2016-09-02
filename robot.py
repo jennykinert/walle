@@ -10,7 +10,8 @@ class Robot:
         self.start()
 
     def start(self):
-        Interval(1, self.update)
+        while(True):
+            self.update()
 
     def update(self):
         pass

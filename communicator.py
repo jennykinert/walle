@@ -5,7 +5,7 @@ from math import atan2
 from http import client
 from utils import heading
 
-HEADERS = {"Content-type": "application/json", "Accept": "text/json"}
+HEADERS = {'Content-type': 'application/json', 'Accept': 'text/json'}
 
 class UnexpectedResponse(Exception): pass
 
@@ -88,8 +88,8 @@ class Communicator:
         if (response.status == 200):
             position_data = response.read()
             json_data = json.loads(position_data.decode('utf-8'))
-            x = json_data["Pose"]["Position"]["X"]
-            y = json_data["Pose"]["Position"]["Y"]
+            x = json_data['Pose']['Position']['X']
+            y = json_data['Pose']['Position']['Y']
             return x,y
         else:
             return UnexpectedResponse(response)
@@ -102,7 +102,7 @@ class Communicator:
             position_data = response.read()
             json_data = json.loads(position_data.decode('utf-8'))
             unit_vector = heading(json_data['Pose']['Orientation'])
-            angle = atan2(unit_vector["Y"], unit_vector["X"])
+            angle = atan2(unit_vector['Y'], unit_vector['X'])
             return angle
         else:
             return UnexpectedResponse(response)
