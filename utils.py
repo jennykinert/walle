@@ -1,6 +1,11 @@
+import math
 
-from threading import Timer
+def angle_between_two_points(x1, y1, x2, y2):
+    """Return radians from -π to π"""
+    return math.atan2(y2-y1, x2-x1)
 
+def distance_between_two_points(x1, y1, x2, y2):
+    return math.sqrt((x1-x2)**2 + (y1-y2)**2)
 
 def heading(quaternion):
     return rotate(quaternion,{'X':1.0,'Y':0.0,"Z":0.0})

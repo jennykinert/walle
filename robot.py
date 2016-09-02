@@ -13,4 +13,4 @@ class Robot:
         Interval(1, self.update)
 
     def update(self):
-        print(1)#self.communicator.get
+        pass
