@@ -28,7 +28,7 @@ def main():
             Robot(path)
 
         else:
-            Robot('Paths/Path-to-bed.json')
+            Robot('../Paths/Path-to-bed.json')
             #print("Must provide file path to json path")
     
 
