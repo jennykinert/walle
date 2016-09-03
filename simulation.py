@@ -37,3 +37,5 @@ if __name__ == '__main__':
         main()
     except KeyboardInterrupt:
         print('Exit')
+    except ConnectionResetError:
+        print('Lost connection to simulation')

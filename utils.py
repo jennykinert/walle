@@ -1,11 +1,51 @@
 import math
 
+# --------------------------------
+# Angles                         -
+# --------------------------------
+
 def angle_between_two_points(x1, y1, x2, y2):
     """Return radians from -π to π"""
     return math.atan2(y2-y1, x2-x1)
 
 def distance_between_two_points(x1, y1, x2, y2):
+    """Calculate distance between two points"""
     return math.sqrt((x1-x2)**2 + (y1-y2)**2)
+
+def angle_within(angle1, angle2, range=math.pi/2):
+    """Checks if angel1 is within +/-range (default π/2) of angle2"""
+    angle1 = normailize_angle(angle1)
+    lower = normailize_angle(angle2-range)
+    upper = normailize_angle(angle2+range)
+    
+    if (abs(angle1 - lower) > math.pi):
+        lower_condition = lower > angle1
+    else:
+        lower_condition = lower < angle1
+
+    if (abs(angle1 - upper) > math.pi):
+        upper_condition = angle1 > upper
+    else:
+        upper_condition = angle1 < upper 
+
+    return lower_condition and upper_condition
+
+def normailize_angle(angle):
+    """Return angle within -π to π"""
+    if angle > math.pi:
+        while angle > math.pi: angle -= 2*math.pi
+        return angle
+    elif angle < -math.pi:
+        while angle < -math.pi: angle += 2*math.pi
+        return angle
+    else:
+        return angle
+
+
+
+# --------------------------------
+# Vectors                        -
+# --------------------------------
 
 def heading(quaternion):
     return rotate(quaternion,{'X':1.0,'Y':0.0,"Z":0.0})

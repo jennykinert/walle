@@ -45,9 +45,10 @@ class Communicator:
 
         response = self.mrds.getresponse()
         status = response.status
+        response.read().decode('utf-8') # Read all data to be able to reuse connection
 
         if status == 204:
-            return response.read().decode('utf-8')
+            return
         else:
             raise UnexpectedResponse(response)
 
@@ -106,3 +107,4 @@ class Communicator:
             return angle
         else:
             return UnexpectedResponse(response)
+
