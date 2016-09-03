@@ -14,9 +14,9 @@ def distance_between_two_points(x1, y1, x2, y2):
 
 def angle_within(angle1, angle2, range=math.pi/2):
     """Checks if angel1 is within +/-range (default π/2) of angle2"""
-    angle1 = normailize_angle(angle1)
-    lower = normailize_angle(angle2-range)
-    upper = normailize_angle(angle2+range)
+    angle1 = normalize_angle(angle1)
+    lower = normalize_angle(angle2-range)
+    upper = normalize_angle(angle2+range)
     
     if (abs(angle1 - lower) > math.pi):
         lower_condition = lower > angle1
@@ -30,7 +30,7 @@ def angle_within(angle1, angle2, range=math.pi/2):
 
     return lower_condition and upper_condition
 
-def normailize_angle(angle):
+def normalize_angle(angle):
     """Return angle within -π to π"""
     if angle > math.pi:
         while angle > math.pi: angle -= 2*math.pi

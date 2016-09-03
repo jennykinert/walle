@@ -5,7 +5,7 @@ from timers import Interval
 from timers import Timed
 from utils import distance_between_two_points
 from utils import angle_between_two_points
-from utils import angle_within_half_circle
+from utils import angle_within
 
 class Robot:
 

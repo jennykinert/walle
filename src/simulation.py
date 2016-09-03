@@ -37,5 +37,7 @@ if __name__ == '__main__':
         main()
     except KeyboardInterrupt:
         print('Exit')
+    except ConnectionRefusedError:
+        print('Could not connect to server')
     except ConnectionResetError:
         print('Lost connection to simulation')

@@ -1,6 +1,5 @@
 
 import json
-import time
 from math import atan2
 from http import client
 from utils import heading
