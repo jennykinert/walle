@@ -1,3 +1,5 @@
+from time import time
+from math import pi
 
 from communicator import Communicator
 import steering
@@ -15,18 +17,21 @@ class Robot:
 
     def start(self):
         x, y = self.communicator.get_position()
-        distans = distance_between_two_points(x, y, 1, 0)
-        self.steering = steering.Distance(distans)
-        while(True):
-            self.update()
+        #distans = distance_between_two_points(x, y, 1, 0)
+        self.steering = steering.Distance(pi/2)
+        t0 = time()
+        while True:
+            self.update(t0)
+            t0 = time()
 
-    def update(self):
-        x, y = self.communicator.get_position()
-        distans_left = distance_between_two_points(x, y, 1, 0)
-        angle = angle_between_two_points(x, y, 1, 0)
+
+    def update(self, prev_time):
+        #x, y = self.communicator.get_position()
+        #distans_left = distance_between_two_points(x, y, 1, 0)
+        #angle = angle_between_two_points(x, y, 1, 0)
         heading = self.communicator.get_heading()
-        if angle_within(heading, angle):
-            distans_left *= -1
-            print(-1)
+        #if not angle_within(heading, angle):
+        #    distans_left *= -1
+
         #print(distans_left)
-        self.communicator.post_speed(0, self.steering.new_speed(distans_left))
+        self.communicator.post_speed(self.steering.new_speed(pi/2 - heading, time() - prev_time), 0)
