@@ -18,7 +18,7 @@ class Robot:
     def start(self):
         x, y = self.communicator.get_position()
         #distans = distance_between_two_points(x, y, 1, 0)
-        self.steering = steering.Distance(pi/2)
+        self.steering = steering.Steering(pi/2)
         t0 = time()
         while True:
             self.update(t0)

@@ -47,20 +47,20 @@ def angle_difference(angle1, angle2):
     diff = ((diff + math.pi) % (math.pi*2)) - math.pi
     return diff * -1
 
-def worldcoordinate_to_robotcoordinate( worldx, worldy, robotx, roboty,robotangle):
-    robotangle = normalize_angle(robotangle)
-    xdiff = worldx-robotx
-    ydiff = worldy-roboty
-    if robotangle>math.pi/2:
+def translate_coordinates_between_systems(global_x, global_y, local_x, local_y, diff_angle):
+    diff_angle = normalize_angle(diff_angle)
+    xdiff = global_x-local_x
+    ydiff = global_y-local_y
+    if diff_angle>math.pi/2:
         xdiff*=-1
-    elif robotangle<-math.pi/2:
+    elif diff_angle<-math.pi/2:
         xdiff*=-1
         ydiff*=-1
-    elif robotangle<0:
+    elif diff_angle<0:
         ydiff*=-1
     angle_diff_point = math.atan2(ydiff,xdiff)
     length_diff_point= math.sqrt(xdiff**2+ydiff**2)
-    angle_robot_point = angle_diff_point - robotangle
+    angle_robot_point = angle_diff_point - diff_angle
     x_robot_point = math.cos(angle_robot_point)*length_diff_point
     y_robot_point = math.sin(angle_robot_point)*length_diff_point
     return x_robot_point, y_robot_point

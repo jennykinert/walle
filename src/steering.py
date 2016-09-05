@@ -5,7 +5,7 @@ Ki = .5
 Kd = .5
 
 
-class Distance:
+class Steering:
 
     def __init__(self, length):
         self._error = length
