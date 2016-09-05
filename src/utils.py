@@ -17,7 +17,7 @@ def angle_within(angle1, angle2, range=math.pi/2):
     angle1 = normalize_angle(angle1)
     lower = normalize_angle(angle2-range)
     upper = normalize_angle(angle2+range)
-    
+
     if (abs(angle1 - lower) > math.pi):
         lower_condition = lower > angle1
     else:
@@ -26,7 +26,7 @@ def angle_within(angle1, angle2, range=math.pi/2):
     if (abs(angle1 - upper) > math.pi):
         upper_condition = angle1 > upper
     else:
-        upper_condition = angle1 < upper 
+        upper_condition = angle1 < upper
 
     return lower_condition and upper_condition
 
@@ -41,6 +41,23 @@ def normalize_angle(angle):
     else:
         return angle
 
+def worldcoordinate_to_robotcoordinate( worldx, worldy, robotx, roboty,robotangle):
+    robotangle = normalize_angle(robotangle)
+    xdiff = worldx-robotx
+    ydiff = worldy-roboty
+    if robotangle>math.pi/2:
+        xdiff*=-1
+    elif robotangle<-math.pi/2:
+        xdiff*=-1
+        ydiff*=-1
+    elif robotangle<0:
+        ydiff*=-1
+    angle_diff_point = math.atan2(ydiff,xdiff)
+    length_diff_point= math.sqrt(xdiff**2+ydiff**2)
+    angle_robot_point = angle_diff_point - robotangle
+    x_robot_point = math.cos(angle_robot_point)*length_diff_point
+    y_robot_point = math.sin(angle_robot_point)*length_diff_point
+    return x_robot_point, y_robot_point
 
 
 # --------------------------------

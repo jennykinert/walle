@@ -26,3 +26,14 @@ class UtilsTest(unittest.TestCase):
         self.assertTrue(math.isclose(utils.normalize_angle(radians(-360-50)), radians(-50)))
         self.assertTrue(math.isclose(utils.normalize_angle(radians(-360-190)), radians(170)))
         self.assertTrue(math.isclose(utils.normalize_angle(radians(-360*5-190)), radians(170)))
+
+    def test_worldcoordinate_to_robotcoordinate(self):
+        x,y=utils.worldcoordinate_to_robotcoordinate(2,2,1,1,math.pi/4)
+        print(x,y)
+        self.assertTrue(math.isclose(x,math.sqrt(2)))
+        self.assertTrue(math.isclose(y,0))
+
+    def test_worldcoordinate_to_robotcoordinate2(self):
+        x,y=utils.worldcoordinate_to_robotcoordinate(0,2,2,2,radians(-135))
+        self.assertTrue(math.isclose(x,-math.cos(math.pi/4)*2))
+        self.assertTrue(math.isclose(y, math.sin(math.pi/4)*2))

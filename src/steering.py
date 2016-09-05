@@ -25,12 +25,14 @@ class Distance:
 
         #delta_m = Kp*(self._error - self._error1) \
         #          + Ki*self._error \
-        #          + Kd*(self._error - self._error1 + self._error2) 
+        #          + Kd*(self._error - self._error1 + self._error2)
         #self._m = self._m1 + delta_m
-        
+
         self._m = pid(self._error, self._error1, self._error2, self._m)
         print(self._m)
         """
+        if dt==0:
+            dt=0.0000001
 
         self._integral += length*dt
         derivative = (length - self._error)/dt
@@ -44,5 +46,5 @@ class Distance:
 def pid(e, e1, e2, m1):
     delta_m = Kp*(e - e1) \
               + Ki*e \
-              + Kd*(e - e1 + e2) 
+              + Kd*(e - e1 + e2)
     return m1 + delta_m

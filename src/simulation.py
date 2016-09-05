@@ -30,7 +30,7 @@ def main():
         else:
             Robot('../Paths/Path-to-bed.json')
             #print("Must provide file path to json path")
-    
+
 
 if __name__ == '__main__':
     try:
