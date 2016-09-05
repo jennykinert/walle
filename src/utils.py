@@ -41,6 +41,12 @@ def normalize_angle(angle):
     else:
         return angle
 
+def angle_difference(angle1, angle2):
+    """Return shortest angle between two angles"""
+    diff = angle1 - angle2
+    diff = ((diff + math.pi) % (math.pi*2)) - math.pi
+    return diff * -1
+
 
 
 # --------------------------------

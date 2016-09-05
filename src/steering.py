@@ -21,7 +21,7 @@ class Distance:
         """
         self._error2 = self._error1
         self._error1 = self._error
-        self._error = length
+        self._error = lengthn j
 
         #delta_m = Kp*(self._error - self._error1) \
         #          + Ki*self._error \
