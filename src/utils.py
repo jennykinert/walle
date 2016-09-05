@@ -41,6 +41,12 @@ def normalize_angle(angle):
     else:
         return angle
 
+def angle_difference(angle1, angle2):
+    """Return shortest angle between two angles"""
+    diff = angle1 - angle2
+    diff = ((diff + math.pi) % (math.pi*2)) - math.pi
+    return diff * -1
+
 def worldcoordinate_to_robotcoordinate( worldx, worldy, robotx, roboty,robotangle):
     robotangle = normalize_angle(robotangle)
     xdiff = worldx-robotx
@@ -58,6 +64,7 @@ def worldcoordinate_to_robotcoordinate( worldx, worldy, robotx, roboty,robotangl
     x_robot_point = math.cos(angle_robot_point)*length_diff_point
     y_robot_point = math.sin(angle_robot_point)*length_diff_point
     return x_robot_point, y_robot_point
+
 
 
 # --------------------------------
