@@ -13,22 +13,19 @@ def main():
             path = sys.argv[1]
             host = sys.argv[2]
             port = sys.argv[3]
-            print('Starting robot on host {}:{}'.format(host, port))
             Robot(path, host=host, port=port).start()
 
         elif len(sys.argv) > 2:
             path = sys.argv[1]
             host = sys.argv[2]
-            print('Starting robot on host {}'.format(host))
             Robot(path, host=host).start()
 
         elif len(sys.argv) > 1:
             path = sys.argv[1]
-            print('Starting robot')
             Robot(path).start()
 
         else:
-            Robot('../Paths/Path-to-bed.json').start()
+            Robot('Paths/Path-around-table-and-back.json').start()
             #print("Must provide file path to json path")
 
 

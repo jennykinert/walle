@@ -3,7 +3,7 @@
 import utils
 from path import EndOfPathError
 
-L = 1 #m
+L = .6 #m
 
 class PathTracker:
 
@@ -30,6 +30,8 @@ class PathTracker:
             self._path.previous()
         except EndOfPathError:
             pass
+
         x, y = utils.translate_coordinates_between_systems(path_x, path_y, robot_x, robot_y, robot_angle)
-        print('Global: {}, {}\nLocal: {}, {}\n'.format(path_x, path_y, x, y))
-        return 2*y/(L**2) * current_velocity
+        L_adjusted = utils.distance_between_two_points(0, 0, x, y)
+
+        return 2*y/(L_adjusted**2) * current_velocity
