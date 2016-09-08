@@ -17,7 +17,7 @@ class Laser:
 
         for i in range(min(len(laser_angles),len(laser_distances))):
             angle=laser_angles[i]
-            angle_between_length_and_radius= math.pi/2-angle
+            angle_between_length_and_radius= 3*math.pi/4-angle
             length=2*radius*math.cos(angle_between_length_and_radius)
             if laser_distances[i]<length:
                 return False
@@ -27,7 +27,8 @@ class Laser:
     def extract_lasers_in_range(self,laser_angles,laser_distances,startx,starty,endx,endy):
         angle_range=utils.angle_between_two_points(startx,starty,endx,endy)
         increment=self.communicator.get_laser_angle_increment()
-        number_of_lasers=(math.pi/2+angle_range)//increment
+        number_of_lasers=math.ceil((3*math.pi/4+angle_range)/increment)
+        print(number_of_lasers, len(laser_angles)//2)
         if angle_range<0:
             laser_angles_in_range=laser_angles[number_of_lasers:len(laser_angles)//2]
             laser_distances_in_range=laser_distances[number_of_lasers:len(laser_distances)//2]
@@ -46,8 +47,7 @@ class Laser:
         laser_distances  = self.communicator.get_laser_distance()
         increment=self.communicator.get_laser_angle_increment()
 
-        laser_index=(math.pi/2+angle)/increment
-        print('Laser index: '+str(laser_index))
+        laser_index=((3*math.pi)/4+angle)/increment
         upper_index=math.ceil(laser_index)
         lower_index=math.floor(laser_index)
         nearest_laser_distances=laser_distances[lower_index:upper_index]
