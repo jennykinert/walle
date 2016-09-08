@@ -94,6 +94,17 @@ class Communicator:
         else:
             return UnexpectedResponse(response)
 
+    def get_position_data(self):
+        """Get position of robot"""
+        self._send_get('/lokarria/localization')
+        response = self.mrds.getresponse()
+        if (response.status == 200):
+            position_data = response.read()
+            json_data = json.loads(position_data.decode('utf-8'))
+            return json_data
+        else:
+            return UnexpectedResponse(response)
+
     def get_heading(self):
         """Returns the angle robot points"""
         self._send_get('/lokarria/localization')
