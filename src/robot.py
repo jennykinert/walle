@@ -62,6 +62,7 @@ class Robot:
                 if self._laser.is_observable(translated_x, translated_y):
                     if self._laser.check_if_circle_safe(translated_x,translated_y):
                         turn_speed = self._path_tracker.get_turn_speed_to_point(self._speed, x, y, heading, end_x, end_y)
+                        print("Took shortcut")
                     else:
                         turn_speed = self._path_tracker.get_turn_speed(self._speed, x, y, heading)
                 else:
