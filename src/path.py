@@ -21,7 +21,6 @@ class Path:
     def next(self):
         try:
             self._index += 1
-            print('Index: '+str(self._index))
             x, y = self.get_position(self._index)
         except IndexError:
             raise EndOfPathError('End of path')
@@ -29,7 +28,7 @@ class Path:
 
     def previous(self):
         try:
-            self._index -= 1
+            self._index = max(-1, self._index-1)
             x, y = self.get_position(self._index)
         except IndexError:
             raise EndOfPathError('Before start of path')
