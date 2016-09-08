@@ -60,8 +60,10 @@ class Robot:
                 end_x, end_y = self._path.get_last_position()
                 translated_x, translated_y = utils.translate_coordinates_between_systems(end_x, end_y, robot_x, robot_y, heading)
                 if self._laser.is_observable(translated_x, translated_y):
-                    print('Can see last point')
-                    turn_speed = self._path_tracker.get_turn_speed_to_point(self._speed, x, y, heading, end_x, end_y)
+                    if self._laser.check_if_circle_safe(translated_x,translated_y):
+                        turn_speed = self._path_tracker.get_turn_speed_to_point(self._speed, x, y, heading, end_x, end_y)
+                    else:
+                        turn_speed = self._path_tracker.get_turn_speed(self._speed, x, y, heading)
                 else:
                     turn_speed = self._path_tracker.get_turn_speed(self._speed, x, y, heading)
             else:
