@@ -31,7 +31,12 @@ class PathTracker:
         except EndOfPathError:
             pass
 
-        x, y = utils.translate_coordinates_between_systems(path_x, path_y, robot_x, robot_y, robot_angle)
+        return self.get_turn_speed_to_point(current_velocity, robot_x, robot_y, robot_angle, path_x, path_y)
+
+    def get_turn_speed_to_point(self, current_velocity, robot_x, robot_y,
+            robot_angle, point_x, point_y):
+
+        x, y = utils.translate_coordinates_between_systems(point_x, point_y, robot_x, robot_y, robot_angle)
         L_adjusted = utils.distance_between_two_points(0, 0, x, y)
 
         return 2*y/(L_adjusted**2) * current_velocity

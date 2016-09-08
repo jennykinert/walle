@@ -17,6 +17,7 @@ class Communicator:
     def __init__(self, host, port):
         self._host = host
         self._port = port
+        self._angle_increment = None
         self.mrds = client.HTTPConnection(host, port=port)
 
     def _send_post(self, url, params):
@@ -75,11 +76,29 @@ class Communicator:
             angles = []
             for i in range(beam_count):
                 angles.append(a)
-                a += properties['AngleIncrement']
+                a += self.get_laser_angle_increment(angle=properties['AngleIncrement'])
 
             return angles
         else:
             raise UnexpectedResponse(response)
+
+    def get_laser_angle_increment(self, angle=None):
+         if self._angle_increment:
+             return self._angle_increment
+         else:
+             if angle:
+                 self._angle_increment = angle
+                 return angle
+             else:
+                 self._send_get('/lokarria/laser/properties')
+                 response = self.mrds.getresponse()
+                 if (response.status == 200):
+                     laser_data = response.read()
+                     properties = json.loads(laser_data.decode('utf-8'))
+                     self._angle_increment = properties['AngleIncrement']
+                     return self._angle_increment
+                 else:
+                     raise UnexpectedResponse(response)
 
     def get_position(self):
         """Get position of robot"""
@@ -106,4 +125,3 @@ class Communicator:
             return angle
         else:
             return UnexpectedResponse(response)
-

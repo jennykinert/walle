@@ -43,3 +43,6 @@ class Path:
         x = position['Pose']['Position']['X']
         y = position['Pose']['Position']['Y']
         return x,y
+
+    def get_last_position(self):
+        return self.get_position(len(self.information)-1)

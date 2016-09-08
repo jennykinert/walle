@@ -51,16 +51,6 @@ def translate_coordinates_between_systems(global_x, global_y, local_x, local_y, 
     diff_angle = normalize_angle(diff_angle)
     xdiff = global_x-local_x
     ydiff = global_y-local_y
-
-    """
-    if diff_angle > math.pi/2:
-        xdiff*=-1
-    elif diff_angle < -math.pi/2:
-        xdiff*=-1
-        ydiff*=-1
-    elif diff_angle < 0:
-        ydiff*=-1
-    """
     
     angle_diff_point = math.atan2(ydiff,xdiff)
     length_diff_point= math.sqrt(xdiff**2+ydiff**2)
