@@ -53,7 +53,7 @@ class Robot:
         #angle = angle_between_two_points(x, y, 1, 0)
 
         self._time_for_new_carrot += time() - prev_time
-        if self._time_for_new_carrot > .1:
+        if self._time_for_new_carrot > .05:
             heading = self.communicator.get_heading()
             if self._allowed_to_check_end:
                 robot_x, robot_y = self.communicator.get_position()
@@ -68,6 +68,8 @@ class Robot:
                     turn_speed = self._path_tracker.get_turn_speed(self._speed, x, y, heading)
             else:
                 turn_speed = self._path_tracker.get_turn_speed(self._speed, x, y, heading)
+            if turn_speed > 2:
+                print('Can\'t turn fast enough!!!')
             self.communicator.post_speed(turn_speed, self._speed)
             self._time_for_new_carrot = 0
 

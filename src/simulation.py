@@ -37,5 +37,5 @@ if __name__ == '__main__':
         print('Exit')
     except ConnectionRefusedError:
         print('Could not connect to server')
-    except ConnectionResetError:
+    except (ConnectionResetError, TimeoutError):
         print('Lost connection to simulation')

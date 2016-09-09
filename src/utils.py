@@ -18,12 +18,12 @@ def angle_within(angle1, angle2, range=math.pi/2):
     lower = normalize_angle(angle2-range)
     upper = normalize_angle(angle2+range)
 
-    if (abs(angle1 - lower) > math.pi):
+    if abs(angle1 - lower) > math.pi:
         lower_condition = lower > angle1
     else:
         lower_condition = lower < angle1
 
-    if (abs(angle1 - upper) > math.pi):
+    if abs(angle1 - upper) > math.pi:
         upper_condition = angle1 > upper
     else:
         upper_condition = angle1 < upper

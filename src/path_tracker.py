@@ -3,7 +3,7 @@
 import utils
 from path import EndOfPathError
 
-L = .6 #m
+L = 1 #m
 
 class PathTracker:
 

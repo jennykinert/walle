@@ -28,7 +28,7 @@ class Laser:
         angle_range=utils.angle_between_two_points(startx,starty,endx,endy)
         increment=self.communicator.get_laser_angle_increment()
         number_of_lasers=math.ceil((3*math.pi/4+angle_range)/increment)
-        print(number_of_lasers, len(laser_angles)//2)
+
         if angle_range<0:
             laser_angles_in_range=laser_angles[number_of_lasers:len(laser_angles)//2]
             laser_distances_in_range=laser_distances[number_of_lasers:len(laser_distances)//2]
