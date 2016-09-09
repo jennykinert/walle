@@ -15,13 +15,13 @@ class Path:
         if path == None:
             raise ValueError
         else:
-            with open(path, "r") as file:
-                self.information = json.load(file)
+            with open(path, 'r') as file:
+                self._information = json.load(file)
 
     def next(self):
         try:
             self._index += 1
-            print('next index',self._index)
+            print('next index', self._index)
             x, y = self.get_position(self._index)
         except IndexError:
             raise EndOfPathError('End of path')
@@ -41,10 +41,12 @@ class Path:
         """
         Returns a specific position on the path
         """
-        position = self.information[n]
+        position = self._information[n]
         x = position['Pose']['Position']['X']
         y = position['Pose']['Position']['Y']
-        return x,y
+        return x, y
 
     def get_last_position(self):
-        return self.get_position(len(self.information)-1)
+        return self.get_position(len(self._information)-1)
+
+

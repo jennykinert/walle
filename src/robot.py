@@ -1,15 +1,10 @@
 from time import time
-from math import pi
 
 from communicator import Communicator
 from path_tracker import PathTracker
 from path_tracker import NoPointObservableError
 from path import Path
 from path import EndOfPathError
-
-from timers import Interval
-from timers import Timed
-import utils
 
 class Robot:
 
@@ -33,8 +28,8 @@ class Robot:
             except EndOfPathError:
                 heading = self._communicator.get_heading()
                 x, y = self._communicator.get_last_position()
-                gamma=self._path_tracker.get_turn_radius_inverse(x,y,heading)
-                turn_speed=gamma*self._speed
+                gamma = self._path_tracker.get_turn_radius_inverse(x, y, heading)
+                turn_speed = gamma*self._speed
                 self._communicator.post_speed(turn_speed, self._speed)
                 print('Finished Path')
                 break
@@ -46,17 +41,18 @@ class Robot:
 
 
     def update(self, prev_time):
-        self._speed=.5
+        self._speed = .5
         x, y = self._communicator.get_position()
         self._time_for_new_carrot += time() - prev_time
 
         if self._time_for_new_carrot > .1:
             heading = self._communicator.get_heading()
-            gamma=self._path_tracker.get_turn_radius_inverse(x,y,heading)
-            turn_speed=gamma*self._speed
-            print('turn speed',turn_speed)
-            if turn_speed>2:
-                turn_speed=2
-                self._speed=turn_speed/gamma
+            gamma = self._path_tracker.get_turn_radius_inverse(x, y, heading)
+            turn_speed = gamma*self._speed
+            print('turn speed', turn_speed)
+            if turn_speed > 2: # TODO Check -2 also
+                turn_speed = 2
+                self._speed = turn_speed/gamma
+                
             self._communicator.post_speed(turn_speed, self._speed)
             self._time_for_new_carrot = 0

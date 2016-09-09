@@ -25,7 +25,6 @@ def main():
             Robot(path).start()
 
         else:
-
             Robot('Paths/Path-around-table-and-back.json').start()
             #print("Must provide file path to json path")
 

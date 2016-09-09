@@ -20,11 +20,13 @@ class Communicator:
         self._angle_increment = None
         self.mrds = client.HTTPConnection(host, port=port)
         self.reset()
+
     def reset(self):
-        self._laser_distances=None
-        self._laser_angles=None
-        self._position=None
-        self._heading=None
+        self._laser_distances = None
+        self._laser_angles = None
+        self._position = None
+        self._heading = None
+
     def _send_post(self, url, params):
         try:
             self.mrds.request('POST', url, params, HEADERS)
@@ -67,7 +69,7 @@ class Communicator:
 
             if (response.status == 200):
                 laser_data = response.read()
-                self._laser_distances=json.loads(laser_data.decode('utf-8'))['Echoes']
+                self._laser_distances = json.loads(laser_data.decode('utf-8'))['Echoes']
                 return self._laser_distances
             else:
                 return response
@@ -83,9 +85,8 @@ class Communicator:
             if (response.status == 200):
                 laser_data = response.read()
                 properties = json.loads(laser_data.decode('utf-8'))
-                beam_count = round((properties['EndAngle']-properties['StartAngle'])/properties['AngleIncrement'])
+                beam_count = round((properties['EndAngle'] - properties['StartAngle'])/properties['AngleIncrement'])
                 a = properties['StartAngle']
-                print(a)
                 self._laser_angles = []
                 for i in range(beam_count):
                     self._laser_angles.append(a)
@@ -125,7 +126,7 @@ class Communicator:
                 json_data = json.loads(position_data.decode('utf-8'))
                 x = json_data['Pose']['Position']['X']
                 y = json_data['Pose']['Position']['Y']
-                self._position=x,y
+                self._position = x, y
                 return self._position
             else:
                 return UnexpectedResponse(response)
@@ -156,3 +157,5 @@ class Communicator:
                 return self._heading
             else:
                 return UnexpectedResponse(response)
+
+
