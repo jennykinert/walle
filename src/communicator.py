@@ -19,7 +19,12 @@ class Communicator:
         self._port = port
         self._angle_increment = None
         self.mrds = client.HTTPConnection(host, port=port)
-
+        self.reset()
+    def reset(self):
+        self._laser_distances=None
+        self._laser_angles=None
+        self._position=None
+        self._heading=None
     def _send_post(self, url, params):
         try:
             self.mrds.request('POST', url, params, HEADERS)
@@ -52,35 +57,43 @@ class Communicator:
         else:
             raise UnexpectedResponse(response)
 
-    def get_laser_distance(self):
+    def get_laser_distances(self):
         """Get the distance all lasers measuered, returned in a list"""
-        self._send_get('/lokarria/laser/echoes')
-        response = self.mrds.getresponse()
-
-        if (response.status == 200):
-            laser_data = response.read()
-            return json.loads(laser_data.decode('utf-8'))['Echoes']
+        if self._laser_distances:
+            return self._laser_distances
         else:
-            return response
+            self._send_get('/lokarria/laser/echoes')
+            response = self.mrds.getresponse()
+
+            if (response.status == 200):
+                laser_data = response.read()
+                self._laser_distances=json.loads(laser_data.decode('utf-8'))['Echoes']
+                return self._laser_distances
+            else:
+                return response
 
     def get_laser_angles(self):
         """Get angles of all lasers, returned in a list"""
-        self._send_get('/lokarria/laser/properties')
-        response = self.mrds.getresponse()
-
-        if (response.status == 200):
-            laser_data = response.read()
-            properties = json.loads(laser_data.decode('utf-8'))
-            beam_count = int((properties['EndAngle']-properties['StartAngle'])/properties['AngleIncrement'])
-            a = properties['StartAngle']
-            angles = []
-            for i in range(beam_count):
-                angles.append(a)
-                a += self.get_laser_angle_increment(angle=properties['AngleIncrement'])
-
-            return angles
+        if self._laser_angles:
+            return self._laser_angles
         else:
-            raise UnexpectedResponse(response)
+            self._send_get('/lokarria/laser/properties')
+            response = self.mrds.getresponse()
+
+            if (response.status == 200):
+                laser_data = response.read()
+                properties = json.loads(laser_data.decode('utf-8'))
+                beam_count = round((properties['EndAngle']-properties['StartAngle'])/properties['AngleIncrement'])
+                a = properties['StartAngle']
+                print(a)
+                self._laser_angles = []
+                for i in range(beam_count):
+                    self._laser_angles.append(a)
+                    a += self.get_laser_angle_increment(angle=properties['AngleIncrement'])
+
+                return self._laser_angles
+            else:
+                raise UnexpectedResponse(response)
 
     def get_laser_angle_increment(self, angle=None):
          if self._angle_increment:
@@ -102,26 +115,33 @@ class Communicator:
 
     def get_position(self):
         """Get position of robot"""
-        self._send_get('/lokarria/localization')
-        response = self.mrds.getresponse()
-        if (response.status == 200):
-            position_data = response.read()
-            json_data = json.loads(position_data.decode('utf-8'))
-            x = json_data['Pose']['Position']['X']
-            y = json_data['Pose']['Position']['Y']
-            return x,y
+        if self._position:
+            return self._position
         else:
-            return UnexpectedResponse(response)
+            self._send_get('/lokarria/localization')
+            response = self.mrds.getresponse()
+            if (response.status == 200):
+                position_data = response.read()
+                json_data = json.loads(position_data.decode('utf-8'))
+                x = json_data['Pose']['Position']['X']
+                y = json_data['Pose']['Position']['Y']
+                self._position=x,y
+                return self._position
+            else:
+                return UnexpectedResponse(response)
 
     def get_heading(self):
         """Returns the angle robot points"""
-        self._send_get('/lokarria/localization')
-        response = self.mrds.getresponse()
-        if (response.status == 200):
-            position_data = response.read()
-            json_data = json.loads(position_data.decode('utf-8'))
-            unit_vector = heading(json_data['Pose']['Orientation'])
-            angle = atan2(unit_vector['Y'], unit_vector['X'])
-            return angle
+        if self._heading:
+            return self._heading
         else:
-            return UnexpectedResponse(response)
+            self._send_get('/lokarria/localization')
+            response = self.mrds.getresponse()
+            if (response.status == 200):
+                position_data = response.read()
+                json_data = json.loads(position_data.decode('utf-8'))
+                unit_vector = heading(json_data['Pose']['Orientation'])
+                self._heading = atan2(unit_vector['Y'], unit_vector['X'])
+                return self._heading
+            else:
+                return UnexpectedResponse(response)
