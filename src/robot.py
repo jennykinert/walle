@@ -3,10 +3,10 @@ from math import pi
 
 from communicator import Communicator
 from path_tracker import PathTracker
+from path_tracker import NoPointObservableError
 from path import Path
 from path import EndOfPathError
-from laser import Laser
-import steering
+
 from timers import Interval
 from timers import Timed
 import utils
@@ -14,67 +14,49 @@ import utils
 class Robot:
 
     def __init__(self, path_file_name, host="localhost", port="50000"):
-        self.communicator = Communicator(host, port)
+        self._communicator = Communicator(host, port)
         self._time_for_new_carrot = 0
         self._path = Path(path_file_name)
-        self._path_tracker = PathTracker(self._path)
-        self._laser = Laser(self.communicator)
+        self._path_tracker = PathTracker(self._path,self._communicator)
 
-        self._speed = 1
-        self._allowed_to_check_end = False
+        self._speed = .5
 
         print('Starting robot on host {}:{}'.format(host, port))
 
     def start(self):
-
-        x, y = self.communicator.get_position()
-        #distans = distance_between_two_points(x, y, 1, 0)
-        self.steering = steering.Steering(pi/2)
         t0 = time()
-        self.communicator.post_speed(0, self._speed)
-        start_time = time()
+        self._communicator.post_speed(0, self._speed)
         while True:
-            if time() - start_time > 10:
-                self._allowed_to_check_end = True
-
             try:
                 self.update(t0)
+                self._communicator.reset()
             except EndOfPathError:
-                self.communicator.post_speed(0, 0)
+                heading = self._communicator.get_heading()
+                x, y = self._communicator.get_last_position()
+                gamma=self._path_tracker.get_turn_radius_inverse(x,y,heading)
+                turn_speed=gamma*self._speed
+                self._communicator.post_speed(turn_speed, self._speed)
                 print('Finished Path')
+                break
+            except NoPointObservableError:
+                print('Could not observe any point')
                 break
 
             t0 = time()
 
 
     def update(self, prev_time):
-        x, y = self.communicator.get_position()
-        #distans_left = distance_between_two_points(x, y, 1, 0)
-        #angle = angle_between_two_points(x, y, 1, 0)
-
+        self._speed=.5
+        x, y = self._communicator.get_position()
         self._time_for_new_carrot += time() - prev_time
-        if self._time_for_new_carrot > .05:
-            heading = self.communicator.get_heading()
-            if self._allowed_to_check_end:
-                robot_x, robot_y = self.communicator.get_position()
-                end_x, end_y = self._path.get_last_position()
-                translated_x, translated_y = utils.translate_coordinates_between_systems(end_x, end_y, robot_x, robot_y, heading)
-                if self._laser.is_observable(translated_x, translated_y):
-                    if self._laser.check_if_circle_safe(translated_x,translated_y):
-                        turn_speed = self._path_tracker.get_turn_speed_to_point(self._speed, x, y, heading, end_x, end_y)
-                    else:
-                        turn_speed = self._path_tracker.get_turn_speed(self._speed, x, y, heading)
-                else:
-                    turn_speed = self._path_tracker.get_turn_speed(self._speed, x, y, heading)
-            else:
-                turn_speed = self._path_tracker.get_turn_speed(self._speed, x, y, heading)
-            if turn_speed > 2:
-                print('Can\'t turn fast enough!!!')
-            self.communicator.post_speed(turn_speed, self._speed)
+
+        if self._time_for_new_carrot > .1:
+            heading = self._communicator.get_heading()
+            gamma=self._path_tracker.get_turn_radius_inverse(x,y,heading)
+            turn_speed=gamma*self._speed
+            print('turn speed',turn_speed)
+            if turn_speed>2:
+                turn_speed=2
+                self._speed=turn_speed/gamma
+            self._communicator.post_speed(turn_speed, self._speed)
             self._time_for_new_carrot = 0
-
-        #if not angle_within(heading, angle):
-        #    distans_left *= -1
-
-        #print(distans_left)
-        #self.communicator.post_speed(self.steering.new_speed(pi/2 - heading, time() - prev_time), 0)
