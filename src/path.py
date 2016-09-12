@@ -10,7 +10,7 @@ class Path:
     def __init__(self, path):
         """Construct the path class. Reads the path file and extract the information
         """
-        self._index = -1
+        self.index = -1
 
         if path == None:
             raise ValueError
@@ -48,5 +48,3 @@ class Path:
 
     def get_last_position(self):
         return self.get_position(len(self._information)-1)
-
-

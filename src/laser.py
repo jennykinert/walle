@@ -20,7 +20,7 @@ class Laser:
         """
         This takes all the lasers and calculates if the circular path to
         endx and endy is unobstructed. endx and endy must be in the robots
-        coordinate system i.e. robots position is 0, 0 with heading 0. 
+        coordinate system i.e. robots position is 0, 0 with heading 0.
         It takes the robot width into account.
         """
         laser_angles = self.communicator.get_laser_angles()
@@ -57,7 +57,7 @@ class Laser:
                     length = radius0*math.cos(angle) + \
                                 math.sqrt((radius0*math.cos(angle))**2 + radius_1**2 - radius0**2)
             except ValueError:
-                print('Math √-1 error: angle', utils.angle_between_two_points(0, 0, endx, endy))
+                print('Math sqrt-1 error: angle', utils.angle_between_two_points(0, 0, endx, endy))
                 continue
 
             if math.pi - angle > u1:
