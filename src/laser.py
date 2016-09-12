@@ -2,16 +2,78 @@ import math
 import utils
 
 
+def sign(v):
+    """Helper function to calculate sign of number"""
+    return math.copysign(1, v)
+
+
 class Laser:
     """
-    This class retrieves information from the lasers. It can get information from
-    all lasers or specific lasers.
+    This class uses the information from the robots lasers to determine
+    path related information
     """
 
     def __init__(self, communicator):
         self.communicator = communicator
 
-    def check_if_circle_safe(self,endx, endy):
+    def check_if_circle_safe(self, endx, endy):
+        """
+        This takes all the lasers and calculates if the circular path to
+        endx and endy is unobstructed. endx and endy must be in the robots
+        coordinate system i.e. robots position is 0, 0 with heading 0. 
+        It takes the robot width into account.
+        """
+        laser_angles = self.communicator.get_laser_angles()
+        laser_distances = self.communicator.get_laser_distances()
+
+        robot_width = .45
+        radius0 = abs((endx**2+endy**2)/(2*endy))
+        radius1 = radius0 + robot_width/2
+        radius_1 = radius0 - robot_width/2
+
+
+        for i in range(min(len(laser_angles),len(laser_distances))):
+            if laser_angles[i] > math.pi/2 or laser_angles[i] < -math.pi/2:
+                continue # can only hande points in front of robot
+
+            angle = math.pi/2 - sign(endy)*laser_angles[i]
+
+            u0 = math.atan2(endy-sign(endy)*radius0, endx)
+            u1 = math.pi/2 + sign(endy)*u0
+            u2 = math.pi - u1 - angle
+
+            #print('Coords:', endx, endy)
+            #print('UUUUs', u0, u1, u2, angle)
+
+            lt = math.sqrt(radius0**2 + radius_1**2 - radius0*radius_1*math.cos(u1))
+            t = u1*radius_1/lt
+
+            try:
+                if angle > t:
+                    length = radius0*math.cos(angle) + \
+                                math.sqrt((radius0*math.cos(angle))**2 + radius1**2 - radius0**2)
+                else:
+                    #print('Domain:', angle, math.cos(angle), radius0)
+                    length = radius0*math.cos(angle) + \
+                                math.sqrt((radius0*math.cos(angle))**2 + radius_1**2 - radius0**2)
+            except ValueError:
+                print('Math √-1 error: angle', utils.angle_between_two_points(0, 0, endx, endy))
+                continue
+
+            if math.pi - angle > u1:
+                length_end = radius0 * u1 / u2
+                if laser_distances[i] < min(length, length_end):
+                    #print('CIRCLE NOT SAFE:', laser_distances[i], length, length_end)
+                    return False
+            else:
+                if laser_distances[i] < length:
+                    #print('CIRCLE NOT SAFE:', laser_distances[i], length)
+                    return False
+
+        return True
+
+
+    def check_if_circle_safe_old(self, endx, endy):
         laser_angles = self.communicator.get_laser_angles()
         laser_distances = self.communicator.get_laser_distances()
         laser_angles,laser_distances = self.extract_lasers_in_range(laser_angles,

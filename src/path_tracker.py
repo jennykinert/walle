@@ -7,6 +7,8 @@ from laser import Laser
 L = 1 #m
 
 class NoPointObservableError(Exception):pass
+
+
 class PathTracker:
 
     def __init__(self, path,communicator):
@@ -14,8 +16,15 @@ class PathTracker:
         self._laser = Laser(communicator)
 
     def get_turn_radius_inverse(self, robot_x, robot_y, robot_angle):
-        path_x, path_y = self.get_next_point(robot_x,robot_y,robot_angle)
-        print(path_x, path_y)
+        try:
+            path_x, path_y = self.get_next_point(robot_x,robot_y,robot_angle)
+        except EndOfPathError:
+            x, y = self._path.get_last_position()
+            path_x, path_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+            if utils.distance_between_two_points(0, 0, path_x, path_y) < .2:
+                raise EndOfPathError('Within 2 dm of end of path')
+
+        #print('Next x, y:', path_x, path_y)
         try:
             self._path.previous()
         except EndOfPathError:

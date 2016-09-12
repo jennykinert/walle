@@ -47,6 +47,10 @@ def angle_difference(angle1, angle2):
     diff = ((diff + math.pi) % (math.pi*2)) - math.pi
     return diff * -1
 
+# --------------------------------
+# Coordinates                    -
+# --------------------------------
+
 def translate_coordinates_between_systems(global_x, global_y, local_x, local_y, diff_angle):
     diff_angle = normalize_angle(diff_angle)
     xdiff = global_x-local_x
@@ -60,7 +64,7 @@ def translate_coordinates_between_systems(global_x, global_y, local_x, local_y, 
     return x_robot_point, y_robot_point
 
 def translate_coordinates_between_systems2(global_x, global_y, local_x, local_y, diff_angle):
-    #diff_angle *= -1
+    diff_angle *= -1
     global_x *= -1
     global_y *= -1
     x = global_x + local_x * math.cos(diff_angle) - local_y * math.sin(diff_angle)

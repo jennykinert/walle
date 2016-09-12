@@ -14,7 +14,8 @@ class Robot:
         self._path = Path(path_file_name)
         self._path_tracker = PathTracker(self._path,self._communicator)
 
-        self._speed = .5
+        self._TARGET_SPEED = .4
+        self._speed = self._TARGET_SPEED
 
         print('Starting robot on host {}:{}'.format(host, port))
 
@@ -26,11 +27,7 @@ class Robot:
                 self.update(t0)
                 self._communicator.reset()
             except EndOfPathError:
-                heading = self._communicator.get_heading()
-                x, y = self._communicator.get_last_position()
-                gamma = self._path_tracker.get_turn_radius_inverse(x, y, heading)
-                turn_speed = gamma*self._speed
-                self._communicator.post_speed(turn_speed, self._speed)
+                self._communicator.post_speed(0, 0)
                 print('Finished Path')
                 break
             except NoPointObservableError:
@@ -41,17 +38,22 @@ class Robot:
 
 
     def update(self, prev_time):
-        self._speed = .5
+        self._speed = self._TARGET_SPEED
         x, y = self._communicator.get_position()
         self._time_for_new_carrot += time() - prev_time
 
-        if self._time_for_new_carrot > .1:
+        if self._time_for_new_carrot > .01:
             heading = self._communicator.get_heading()
             gamma = self._path_tracker.get_turn_radius_inverse(x, y, heading)
             turn_speed = gamma*self._speed
-            print('turn speed', turn_speed)
-            if turn_speed > 2: # TODO Check -2 also
+            #print('turn speed', turn_speed)
+            if turn_speed > 2:
+                print('Turning to fast', turn_speed)
                 turn_speed = 2
+                self._speed = turn_speed/gamma
+            elif turn_speed < -2:
+                print('Turning to fast', turn_speed)
+                turn_speed = -2
                 self._speed = turn_speed/gamma
                 
             self._communicator.post_speed(turn_speed, self._speed)
