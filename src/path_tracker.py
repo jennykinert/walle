@@ -75,8 +75,11 @@ class PathTracker:
                 if self._laser.check_if_circle_safe(path_x,path_y):
                     return path_x, path_y
                 else:
-                    x, y = self._path.previous()
-                    path_x, path_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+                    try:
+                        x, y = self._path.previous()
+                        path_x, path_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+                    except EndOfPathError:
+                        raise NoPointObservableError()
 
         except NameError:
             raise NoPointObservableError()

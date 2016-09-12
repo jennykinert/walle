@@ -48,9 +48,20 @@ class Robot:
         self._time_for_new_carrot += time() - prev_time
 
         if self._time_for_new_carrot > .01:
-            heading = self._communicator.get_heading()
-            gamma = self._path_tracker.get_turn_radius_inverse(x, y, heading)
-            turn_speed = gamma*self._speed
+            try:
+                heading = self._communicator.get_heading()
+                gamma = self._path_tracker.get_turn_radius_inverse(x, y, heading)
+                turn_speed = gamma*self._speed
+            except NoPointObservableError:
+                #Make the robot rotate til it sees points to go to
+                current_angular_speed=self._communicator.get_angular_speed()
+                if current_angular_speed>0:
+                    turn_speed=2
+                    speed=0
+                else:
+                    turn_speed=-2
+                    speed=0
+
             #print('turn speed', turn_speed)
             if abs(turn_speed) > 2:
                 print('Turning to fast', turn_speed)
