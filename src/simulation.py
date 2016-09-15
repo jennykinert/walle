@@ -25,7 +25,7 @@ def main():
             Robot(path).start()
 
         else:
-            Robot('src/Path-16.09.15-42.35.json').start()
+            Robot('Paths/Path-room-turnaround.json').start()
             #print("Must provide file path to json path")
 
 
