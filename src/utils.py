@@ -1,5 +1,7 @@
+"""
+A collection of helper functions to be used with angles, coordinates and vectors
+"""
 import math
-
 
 def sign(v):
     """Helper function to calculate sign of number"""
@@ -57,27 +59,20 @@ def angle_difference(angle1, angle2):
 # --------------------------------
 
 def translate_coordinates_between_systems(global_x, global_y, local_x, local_y, diff_angle):
+    """
+    Translate global_x and global_y from the world coordinate system to the
+    local coordinate system defined by origin in local_x and local_y.
+    """
     diff_angle = normalize_angle(diff_angle)
     xdiff = global_x-local_x
     ydiff = global_y-local_y
-    
+
     angle_diff_point = math.atan2(ydiff,xdiff)
     length_diff_point= math.sqrt(xdiff**2+ydiff**2)
     angle_robot_point = angle_diff_point - diff_angle
     x_robot_point = math.cos(angle_robot_point)*length_diff_point
     y_robot_point = math.sin(angle_robot_point)*length_diff_point
     return x_robot_point, y_robot_point
-
-def translate_coordinates_between_systems2(global_x, global_y, local_x, local_y, diff_angle):
-    diff_angle *= -1
-    global_x *= -1
-    global_y *= -1
-    x = global_x + local_x * math.cos(diff_angle) - local_y * math.sin(diff_angle)
-    y = global_y + local_x * math.sin(diff_angle) + local_y * math.cos(diff_angle)
-    return x, y
-
-
-
 
 # --------------------------------
 # Vectors                        -
