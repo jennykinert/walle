@@ -24,6 +24,14 @@ class PathTracker:
             path_x, path_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
             if utils.distance_between_two_points(0, 0, path_x, path_y) < .2:
                 raise EndOfPathError('Within 2 dm of end of path')
+            if not self._laser.check_if_circle_safe(path_x,path_y):
+                while True:
+                    x, y = self._path.previous()
+                    translated_x, translated_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+                    if self._laser.check_if_circle_safe(translated_x, translated_y):
+                        path_x, path_y = translated_x, translated_y
+                        break
+
 
         #print('Next x, y:', path_x, path_y)
         try:
@@ -80,8 +88,11 @@ class PathTracker:
                 if self._laser.check_if_circle_safe(path_x,path_y):
                     return path_x, path_y
                 else:
-                    x, y = self._path.previous()
-                    path_x, path_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+                    try:
+                        x, y = self._path.previous()
+                        path_x, path_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+                    except EndOfPathError:
+                        raise NoPointObservableError()
 
         except NameError:
             raise NoPointObservableError()

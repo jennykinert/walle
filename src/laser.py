@@ -15,7 +15,7 @@ class Laser:
         """
         This takes all the lasers and calculates if the circular path to
         endx and endy is unobstructed. endx and endy must be in the robots
-        coordinate system i.e. robots position is 0, 0 with heading 0. 
+        coordinate system i.e. robots position is 0, 0 with heading 0.
         It takes the robot width into account.
         """
         laser_angles = self.communicator.get_laser_angles()

@@ -158,4 +158,11 @@ class Communicator:
             else:
                 return UnexpectedResponse(response)
 
-
+    def get_angular_speed(self):
+        self._send_get( '/lokarria/differentialdrive')
+        response = self.mrds.getresponse()
+        if (response.status == 200):
+            angular_speed_data = response.read()
+            json_data = json.loads(angular_speed_data.decode('utf-8'))
+            current_angular_speed= json_data['Feedback']['CurrentAngularSpeed']
+            return current_angular_speed

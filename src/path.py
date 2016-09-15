@@ -10,7 +10,7 @@ class Path:
     def __init__(self, path):
         """Construct the path class. Reads the path file and extract the information
         """
-        self._index = -1
+        self.index = -1
 
         if path == None:
             raise ValueError
@@ -20,18 +20,18 @@ class Path:
 
     def next(self):
         try:
-            self._index += 1
+            self.index += 1
             #print('next index', self._index)
-            x, y = self.get_position(self._index)
+            x, y = self.get_position(self.index)
         except IndexError:
             raise EndOfPathError('End of path')
         return x, y
 
     def previous(self):
         try:
-            self._index = max(-1, self._index-1)
+            self.index = max(-1, self.index-1)
             #print('previous index', self._index)
-            x, y = self.get_position(self._index)
+            x, y = self.get_position(self.index)
         except IndexError:
             raise EndOfPathError('Before start of path')
         return x, y
@@ -48,5 +48,3 @@ class Path:
 
     def get_last_position(self):
         return self.get_position(len(self._information)-1)
-
-
