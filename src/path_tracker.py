@@ -5,8 +5,6 @@ import utils
 from path import EndOfPathError
 from laser import Laser
 
-L = 1 #m
-
 class NoPointObservableError(Exception):pass
 
 
@@ -44,7 +42,10 @@ class PathTracker:
     def get_turn_radius_inverse_to_point(self, x, y):
         L_adjusted = utils.distance_between_two_points(0, 0, x, y)
         angle = utils.angle_between_two_points(0, 0, x, y)
-        
+
+        if abs(angle) > math.pi/2:
+            return 9999999*utils.sign(angle)
+
         if abs(angle) > math.pi/2:
             angle = utils.sign(angle) * math.pi/2
 

@@ -47,7 +47,7 @@ class Robot:
         x, y = self._communicator.get_position()
         self._time_for_new_carrot += time() - prev_time
 
-        if self._time_for_new_carrot > .01:
+        if self._time_for_new_carrot > 0:
             try:
                 heading = self._communicator.get_heading()
                 gamma = self._path_tracker.get_turn_radius_inverse(x, y, heading)
@@ -64,8 +64,8 @@ class Robot:
 
             #print('turn speed', turn_speed)
             if abs(turn_speed) > 2:
-                print('Turning to fast', turn_speed)
-                turn_speed = math.copysign(1, turn_speed)*2
+                #print('Turning to fast', turn_speed)
+                turn_speed = utils.sign(turn_speed)*2
                 self._speed = turn_speed/gamma
 
             self._communicator.post_speed(turn_speed, self._speed)
@@ -76,11 +76,11 @@ class Robot:
         x,y=self._communicator.get_position()
         new_x,new_y=self._path.next()
 
-        if utils.distance_between_two_points(new_x,new_y,x,y)<0.2:
+        if utils.distance_between_two_points(new_x,new_y,x,y)<1:
             while True:
                 angle=utils.angle_between_two_points(x,y,new_x,new_y)
                 new_x,new_y = self._path.next()
-                if utils.distance_between_two_points(x,y,new_x,new_y)>0.2:
+                if utils.distance_between_two_points(x,y,new_x,new_y)>1:
                     break
         else:
             raise StartpointIsNotInRangeError()

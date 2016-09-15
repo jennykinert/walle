@@ -43,17 +43,21 @@ class Laser:
             lt = math.sqrt(radius0**2 + radius_1**2 - radius0*radius_1*math.cos(u1))
             t = u1*radius_1/lt
 
-            try:
-                if angle > t:
+            if angle > t:
+                try:
                     length = radius0*math.cos(angle) + \
                                 math.sqrt((radius0*math.cos(angle))**2 + radius1**2 - radius0**2)
-                else:
-                    #print('Domain:', angle, math.cos(angle), radius0)
+                except ValueError:
+                    #print('1.Math sqrt-1 error: angle', utils.angle_between_two_points(0, 0, endx, endy))
+                    return False
+            else:
+                #print('Domain:', angle, math.cos(angle), radius0)
+                try:
                     length = radius0*math.cos(angle) + \
                                 math.sqrt((radius0*math.cos(angle))**2 + radius_1**2 - radius0**2)
-            except ValueError:
-                print('Math √-1 error: angle', utils.angle_between_two_points(0, 0, endx, endy))
-                return False
+                except ValueError:
+                    #print('2.Math sqrt-1 error: angle', utils.angle_between_two_points(0, 0, endx, endy),angle, radius_1)
+                    return False
 
             if math.pi - angle > u1:
                 length_end = radius0 * u1 / u2
