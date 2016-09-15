@@ -25,14 +25,18 @@ class Robot:
     def start(self):
         self.check_if_start_position()
         self._communicator.post_speed(0, self._speed)
+        
+        self.time_taking0 = time()
+
         t0 = time()
         while True:
             try:
                 self.update(t0)
                 self._communicator.reset()
             except EndOfPathError:
+                time_taking = time() - self.time_taking0
                 self._communicator.post_speed(0, 0)
-                print('Finished Path')
+                print('Finished Path with time: {}s'.format(time_taking))
                 break
             except NoPointObservableError:
                 print('Could not observe any point')
@@ -76,7 +80,7 @@ class Robot:
 
         if utils.distance_between_two_points(new_x,new_y,x,y)<1:
             while True:
-                angle=utils.angle_between_two_points(x,y,new_x,new_y)
+                angle = utils.angle_between_two_points(x,y,new_x,new_y)
                 new_x,new_y = self._path.next()
                 if utils.distance_between_two_points(x,y,new_x,new_y)>1:
                     break
