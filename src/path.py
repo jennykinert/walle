@@ -28,7 +28,7 @@ class Path:
         return x, y
 
     def previous(self):
-        try:    
+        try:
             self.index = max(-1, self.index-1)
             #print('previous index', self._index)
             x, y = self.get_position(self.index)
@@ -47,4 +47,4 @@ class Path:
         return x, y
 
     def get_last_position(self):
-        return self.get_position(len(self.information)-1)
+        return self.get_position(len(self._information)-1)
