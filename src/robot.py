@@ -14,7 +14,7 @@ class Robot:
         self._path = Path(path_file_name)
         self._path_tracker = PathTracker(self._path,self._communicator)
 
-        self._TARGET_SPEED = .4
+        self._TARGET_SPEED = 1
         self._speed = self._TARGET_SPEED
 
         print('Starting robot on host {}:{}'.format(host, port))

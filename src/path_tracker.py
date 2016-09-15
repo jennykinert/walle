@@ -1,5 +1,6 @@
 """High level control"""
 
+import math
 import utils
 from path import EndOfPathError
 from laser import Laser
@@ -31,10 +32,22 @@ class PathTracker:
             pass
         return self.get_turn_radius_inverse_to_point(path_x, path_y)
 
+
     def get_turn_radius_inverse_to_point(self, x, y):
         L_adjusted = utils.distance_between_two_points(0, 0, x, y)
+        angle = utils.angle_between_two_points(0, 0, x, y)
+        
+        if abs(angle) > math.pi/2:
+            angle = utils.sign(angle) * math.pi/2
 
-        return 2*y/(L_adjusted**2)
+        if abs(angle) == math.pi/2:
+            angle -= utils.sign(angle)*0.0001
+
+        gamma = (2*y)/(L_adjusted**2)
+
+        #return angle / (math.pi/2 - angle) * gamma
+        return gamma
+
 
     def get_next_point(self, robot_x, robot_y, robot_angle):
         backtracking = False

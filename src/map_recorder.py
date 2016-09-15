@@ -12,7 +12,7 @@ def record(host, port):
 
         com = Communicator(host, port)
         while True:
-            position_data = com.get_position()
+            position_data = com.get_position_data()
             x = position_data['Pose']['Position']['X']
             y = position_data['Pose']['Position']['Y']
             if len(positions) == 0:

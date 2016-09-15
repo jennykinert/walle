@@ -1,5 +1,10 @@
 import math
 
+
+def sign(v):
+    """Helper function to calculate sign of number"""
+    return math.copysign(1, v)
+
 # --------------------------------
 # Angles                         -
 # --------------------------------

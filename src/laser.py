@@ -2,11 +2,6 @@ import math
 import utils
 
 
-def sign(v):
-    """Helper function to calculate sign of number"""
-    return math.copysign(1, v)
-
-
 class Laser:
     """
     This class uses the information from the robots lasers to determine
@@ -36,10 +31,10 @@ class Laser:
             if laser_angles[i] > math.pi/2 or laser_angles[i] < -math.pi/2:
                 continue # can only hande points in front of robot
 
-            angle = math.pi/2 - sign(endy)*laser_angles[i]
+            angle = math.pi/2 - utils.sign(endy)*laser_angles[i]
 
-            u0 = math.atan2(endy-sign(endy)*radius0, endx)
-            u1 = math.pi/2 + sign(endy)*u0
+            u0 = math.atan2(endy-utils.sign(endy)*radius0, endx)
+            u1 = math.pi/2 + utils.sign(endy)*u0
             u2 = math.pi - u1 - angle
 
             #print('Coords:', endx, endy)
@@ -58,7 +53,7 @@ class Laser:
                                 math.sqrt((radius0*math.cos(angle))**2 + radius_1**2 - radius0**2)
             except ValueError:
                 print('Math √-1 error: angle', utils.angle_between_two_points(0, 0, endx, endy))
-                continue
+                return False
 
             if math.pi - angle > u1:
                 length_end = radius0 * u1 / u2
