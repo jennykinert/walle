@@ -11,7 +11,8 @@ class UnexpectedResponse(Exception): pass
 class Communicator:
     """
     This class will handle the communication with the robot as in sending
-    json files back and forth.
+    json files back and forth. All information which is received is stored 
+    for next call and only gets new information avfter method reset is called
     """
 
     def __init__(self, host, port):
@@ -22,10 +23,12 @@ class Communicator:
         self.reset()
 
     def reset(self):
+        """Resets all stored values. Should be called ones per timestep"""
         self._laser_distances = None
         self._laser_angles = None
         self._position = None
         self._heading = None
+        self._angular_speed = None
 
     def _send_post(self, url, params):
         try:
@@ -97,22 +100,26 @@ class Communicator:
                 raise UnexpectedResponse(response)
 
     def get_laser_angle_increment(self, angle=None):
-         if self._angle_increment:
-             return self._angle_increment
-         else:
-             if angle:
-                 self._angle_increment = angle
-                 return angle
-             else:
-                 self._send_get('/lokarria/laser/properties')
-                 response = self.mrds.getresponse()
-                 if (response.status == 200):
-                     laser_data = response.read()
-                     properties = json.loads(laser_data.decode('utf-8'))
-                     self._angle_increment = properties['AngleIncrement']
-                     return self._angle_increment
-                 else:
-                     raise UnexpectedResponse(response)
+        """
+        Get increment between laser angles. If angle argument is used, it
+        will be stored as angle increment for next calls
+        """
+        if self._angle_increment:
+            return self._angle_increment
+        else:
+            if angle:
+                self._angle_increment = angle
+                return angle
+            else:
+                self._send_get('/lokarria/laser/properties')
+                response = self.mrds.getresponse()
+                if (response.status == 200):
+                    laser_data = response.read()
+                    properties = json.loads(laser_data.decode('utf-8'))
+                    self._angle_increment = properties['AngleIncrement']
+                    return self._angle_increment
+                else:
+                    raise UnexpectedResponse(response)
 
     def get_position(self):
         """Get position of robot"""
@@ -132,7 +139,7 @@ class Communicator:
                 return UnexpectedResponse(response)
 
     def get_position_data(self):
-        """Get position of robot"""
+        """Get position data of robot"""
         self._send_get('/lokarria/localization')
         response = self.mrds.getresponse()
         if (response.status == 200):
@@ -159,10 +166,17 @@ class Communicator:
                 return UnexpectedResponse(response)
 
     def get_angular_speed(self):
-        self._send_get( '/lokarria/differentialdrive')
-        response = self.mrds.getresponse()
-        if (response.status == 200):
-            angular_speed_data = response.read()
-            json_data = json.loads(angular_speed_data.decode('utf-8'))
-            current_angular_speed= json_data['Feedback']['CurrentAngularSpeed']
-            return current_angular_speed
+        """Return current robot angular speed"""
+
+        if self._angular_speed:
+            return self._angular_speed
+        else:
+            self._send_get( '/lokarria/differentialdrive')
+            response = self.mrds.getresponse()
+            if response.status == 200:
+                angular_speed_data = response.read()
+                json_data = json.loads(angular_speed_data.decode('utf-8'))
+                self._angular_speed = json_data['Feedback']['CurrentAngularSpeed']
+                return self._angular_speed
+
+

@@ -5,7 +5,6 @@ from path_tracker import PathTracker
 from path_tracker import NoPointObservableError
 from path import Path
 from path import EndOfPathError
-import math
 import utils
 
 class StartpointIsNotInRangeError(Exception):pass
@@ -57,12 +56,11 @@ class Robot:
                 current_angular_speed=self._communicator.get_angular_speed()
                 if current_angular_speed>0:
                     turn_speed=2
-                    speed=0
+                    self._speed=0
                 else:
                     turn_speed=-2
-                    speed=0
+                    self._speed=0
 
-            #print('turn speed', turn_speed)
             if abs(turn_speed) > 2:
                 #print('Turning to fast', turn_speed)
                 turn_speed = utils.sign(turn_speed)*2

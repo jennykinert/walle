@@ -9,19 +9,26 @@ class NoPointObservableError(Exception):pass
 
 
 class PathTracker:
+    """
+    Uses Pure Pursuit to determine next position in path to take.
+    Chooses point based on observability and collision detection.
+    """
 
-    def __init__(self, path,communicator):
+    def __init__(self, path, communicator):
         self._path = path
         self._laser = Laser(communicator)
 
     def get_turn_radius_inverse(self, robot_x, robot_y, robot_angle):
         try:
             path_x, path_y = self.get_next_point(robot_x,robot_y,robot_angle)
+
         except EndOfPathError:
             x, y = self._path.get_last_position()
             path_x, path_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+
             if utils.distance_between_two_points(0, 0, path_x, path_y) < .2:
                 raise EndOfPathError('Within 2 dm of end of path')
+
             if not self._laser.check_if_circle_safe(path_x,path_y):
                 while True:
                     x, y = self._path.previous()
@@ -30,8 +37,6 @@ class PathTracker:
                         path_x, path_y = translated_x, translated_y
                         break
 
-
-        #print('Next x, y:', path_x, path_y)
         try:
             self._path.previous()
         except EndOfPathError:
@@ -59,6 +64,11 @@ class PathTracker:
 
 
     def get_next_point(self, robot_x, robot_y, robot_angle):
+        """
+        Get next point to which is viable to travel to. Will base 
+        viability on that point must be visible and able to be traveled to without collision
+        """
+
         backtracking = False
 
         while True:

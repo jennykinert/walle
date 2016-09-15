@@ -1,3 +1,14 @@
+"""
+Script to record a path driven by the robot.
+
+Takes to optional argument
+arg1: ip-address (default: localhost)
+arg2: port (default: 50000)
+
+Will finish and save to file on ctrl-c. 
+File name will be in form of Path-<data>-<time>.json
+"""
+
 
 from communicator import Communicator
 from utils import distance_between_two_points
