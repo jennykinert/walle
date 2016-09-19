@@ -10,6 +10,10 @@ import utils
 class StartpointIsNotInRangeError(Exception):pass
 
 class Robot:
+    """
+    This class controls the robots driving by setting speed and angular speed.
+    The class also controls the total time and time for one timestep.
+    """
 
     def __init__(self, path_file_name, host="localhost", port="50000"):
         self._communicator = Communicator(host, port)
@@ -23,9 +27,10 @@ class Robot:
         print('Starting robot on host {}:{}'.format(host, port))
 
     def start(self):
+        """Starts timing and make sure the robot moves to it´s first point"""
         self.check_if_start_position()
         self._communicator.post_speed(0, self._speed)
-        
+
         self.time_taking0 = time()
 
         t0 = time()
@@ -46,6 +51,10 @@ class Robot:
 
 
     def update(self, prev_time):
+        """
+        Udates the point where the robot is headed and determine how much
+        to turn, in order to get to the selected point.
+        """
         self._speed = self._TARGET_SPEED
         x, y = self._communicator.get_position()
         self._time_for_new_carrot += time() - prev_time
@@ -75,6 +84,9 @@ class Robot:
 
 
     def check_if_start_position(self):
+        """
+        Controls if the startposition of the path is within 1 meter of the robot
+        """
         x,y=self._communicator.get_position()
         new_x,new_y=self._path.next()
 
