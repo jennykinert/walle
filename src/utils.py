@@ -20,7 +20,7 @@ def distance_between_two_points(x1, y1, x2, y2):
     return math.sqrt((x1-x2)**2 + (y1-y2)**2)
 
 def angle_within(angle1, angle2, range=math.pi/2):
-    """Checks if angel1 is within +/-range (default π/2) of angle2"""
+    """Checks if angle1 is within +/-range (default π/2) of angle2"""
     angle1 = normalize_angle(angle1)
     lower = normalize_angle(angle2-range)
     upper = normalize_angle(angle2+range)
