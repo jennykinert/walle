@@ -19,6 +19,12 @@ class PathTracker:
         self._laser = Laser(communicator)
 
     def get_turn_radius_inverse(self, robot_x, robot_y, robot_angle):
+        """
+        Get radius inverse, also called gamma, for the circle based upon the
+        robots coordinates a goal point which is chosen.
+        Will raise EndOfPathError if robot is within 1 m of end of path
+        """
+
         try:
             path_x, path_y = self.get_next_point(robot_x,robot_y,robot_angle)
 
@@ -26,8 +32,8 @@ class PathTracker:
             x, y = self._path.get_last_position()
             path_x, path_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
 
-            if utils.distance_between_two_points(0, 0, path_x, path_y) < .2:
-                raise EndOfPathError('Within 2 dm of end of path')
+            if utils.distance_between_two_points(0, 0, path_x, path_y) < 1:
+                raise EndOfPathError('Within 1m of end of path')
 
             if not self._laser.check_if_circle_safe(path_x,path_y):
                 while True:
@@ -45,6 +51,8 @@ class PathTracker:
 
 
     def get_turn_radius_inverse_to_point(self, x, y):
+        """Performs Pure Pursuit Algorithms formula to calculate radius inverse"""
+
         L_adjusted = utils.distance_between_two_points(0, 0, x, y)
         angle = utils.angle_between_two_points(0, 0, x, y)
 
@@ -59,7 +67,6 @@ class PathTracker:
 
         gamma = (2*y)/(L_adjusted**2)
 
-        #return angle / (math.pi/2 - angle) * gamma
         return gamma
 
 

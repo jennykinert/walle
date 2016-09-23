@@ -7,31 +7,42 @@ from path import Path
 from path import EndOfPathError
 import utils
 
-class StartpointIsNotInRangeError(Exception):pass
+class StartPointNotInRangeError(Exception):pass
 
 class Robot:
+    """
+    The robot controls all the behavior and communication with the robot on
+    the MRDS system
+    """
 
     def __init__(self, path_file_name, host="localhost", port="50000"):
         self._communicator = Communicator(host, port)
         self._time_for_new_carrot = 0
         self._path = Path(path_file_name)
-        self._path_tracker = PathTracker(self._path,self._communicator)
+        self._path_tracker = PathTracker(self._path, self._communicator)
 
         self._TARGET_SPEED = 1
-        self._speed = self._TARGET_SPEED
+        self._MAX_TURNING_SPEED = 2
+
+        self._turning_to_find_point = None
+        self._TURNING_TO_FIND_POINT_TIME = 7
 
         print('Starting robot on host {}:{}'.format(host, port))
 
     def start(self):
-        self.check_if_start_position()
-        self._communicator.post_speed(0, self._speed)
+        """
+        Start the robot and its movement. Is blocking until robots finish
+        or determine it cannot finish path
+        """
+
+        self.extend_start_position()
+        self._communicator.post_speed(0, self._TARGET_SPEED)
         
         self.time_taking0 = time()
 
-        t0 = time()
         while True:
             try:
-                self.update(t0)
+                self.update()
                 self._communicator.reset()
             except EndOfPathError:
                 time_taking = time() - self.time_taking0
@@ -41,48 +52,57 @@ class Robot:
             except NoPointObservableError:
                 print('Could not observe any point')
                 break
+            except StartPointNotInRangeError:
+                print('Staring point is not range')
+                break
 
-            t0 = time()
 
-
-    def update(self, prev_time):
-        self._speed = self._TARGET_SPEED
+    def update(self):
+        """
+        An update on the robot. Performed once per timestep. Will use robots
+        information to set a linear speed and a turning speed
+        """
+        speed = self._TARGET_SPEED
         x, y = self._communicator.get_position()
-        self._time_for_new_carrot += time() - prev_time
 
-        if self._time_for_new_carrot > 0:
-            try:
-                heading = self._communicator.get_heading()
-                gamma = self._path_tracker.get_turn_radius_inverse(x, y, heading)
-                turn_speed = gamma*self._speed
-            except NoPointObservableError:
-                #Make the robot rotate til it sees points to go to
-                current_angular_speed=self._communicator.get_angular_speed()
-                if current_angular_speed>0:
-                    turn_speed=2
-                    self._speed=0
-                else:
-                    turn_speed=-2
-                    self._speed=0
+        heading = self._communicator.get_heading()
+        try:
+            gamma = self._path_tracker.get_turn_radius_inverse(x, y, heading)
+            turn_speed = gamma*speed
 
-            if abs(turn_speed) > 2:
-                #print('Turning to fast', turn_speed)
-                turn_speed = utils.sign(turn_speed)*2
-                self._speed = turn_speed/gamma
+        except NoPointObservableError:
+            # Make the robot rotate til it sees points to go to
+            current_angular_speed = self._communicator.get_angular_speed()
+            turn_speed = utils.sign(current_angular_speed) * self._MAX_TURNING_SPEED
+            speed = 0
+            if not self._turning_to_find_point:
+                self._turning_to_find_point = time()
+            else:
+                if self._turning_to_find_point - time() > self._TURNING_TO_FIND_POINT_TIME:
+                    raise NoPointObservableError()
 
-            self._communicator.post_speed(turn_speed, self._speed)
-            self._time_for_new_carrot = 0
+        if abs(turn_speed) > self._MAX_TURNING_SPEED:
+            # Limit linear speed as max turning speed is constant
+            turn_speed = utils.sign(turn_speed)*self._MAX_TURNING_SPEED
+            speed = turn_speed/gamma
+
+        self._communicator.post_speed(turn_speed, speed)
 
 
-    def check_if_start_position(self):
-        x,y=self._communicator.get_position()
-        new_x,new_y=self._path.next()
+    def extend_start_position(self):
+        """
+        Skip points on the path to make the starting point a small distance forward.
+        This is because the robot might make unecessary turning if the starting point
+        happen to be a small distance behind robot
+        """
+        EXTEND_DISTANCE = .5
+        x, y = self._communicator.get_position()
+        new_x, new_y = self._path.next()
 
-        if utils.distance_between_two_points(new_x,new_y,x,y)<1:
+        if utils.distance_between_two_points(new_x, new_y, x, y) < EXTEND_DISTANCE:
             while True:
-                angle = utils.angle_between_two_points(x,y,new_x,new_y)
-                new_x,new_y = self._path.next()
-                if utils.distance_between_two_points(x,y,new_x,new_y)>1:
+                new_x, new_y = self._path.next()
+                if utils.distance_between_two_points(x, y, new_x, new_y) > EXTEND_DISTANCE:
                     break
         else:
-            raise StartpointIsNotInRangeError()
+            raise StartPointNotInRangeError()
