@@ -35,26 +35,28 @@ class Robot:
         or determine it cannot finish path
         """
 
-        self.extend_start_position()
-        self._communicator.post_speed(0, self._TARGET_SPEED)
-        
-        self.time_taking0 = time()
+        try:
+            self.extend_start_position()
+        except StartPointNotInRangeError:
+            print('Staring point is not range (1m)')
+        else:  
+            self._communicator.post_speed(0, self._TARGET_SPEED)
+            
+            self.time_taking0 = time()
 
-        while True:
-            try:
-                self.update()
-                self._communicator.reset()
-            except EndOfPathError:
-                time_taking = time() - self.time_taking0
-                self._communicator.post_speed(0, 0)
-                print('Finished Path with time: {}s'.format(time_taking))
-                break
-            except NoPointObservableError:
-                print('Could not observe any point')
-                break
-            except StartPointNotInRangeError:
-                print('Staring point is not range')
-                break
+            while True:
+                try:
+                    self.update()
+                    self._communicator.reset()
+                except EndOfPathError:
+                    time_taking = time() - self.time_taking0
+                    self._communicator.post_speed(0, 0)
+                    print('Finished Path with time: {}s'.format(time_taking))
+                    break
+                except NoPointObservableError:
+                    print('Could not observe any point')
+                    break
+
 
 
     def update(self):
@@ -95,7 +97,7 @@ class Robot:
         This is because the robot might make unecessary turning if the starting point
         happen to be a small distance behind robot
         """
-        EXTEND_DISTANCE = .5
+        EXTEND_DISTANCE = 1
         x, y = self._communicator.get_position()
         new_x, new_y = self._path.next()
 

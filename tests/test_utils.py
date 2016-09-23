@@ -5,6 +5,9 @@ from math import radians
 from src import utils
 
 class UtilsTest(unittest.TestCase):
+    """
+    Test cases for the mathematical parts of the utils module.
+    """
 
     def test_angle_within_half_circle(self):
         self.assertTrue(utils.angle_within(radians(10), radians(-10)))
@@ -31,7 +34,6 @@ class UtilsTest(unittest.TestCase):
         self.assertTrue(math.isclose(utils.angle_difference(radians(-170), radians(170)), radians(-20)))
         self.assertTrue(math.isclose(utils.angle_difference(radians(0), radians(-80)), radians(-80)))
 
-    """
     def test_translate_coordinates_between_systems_quadrant_1(self):
         try:
             expected_x, expected_y = math.sqrt(2), 0
@@ -86,4 +88,3 @@ class UtilsTest(unittest.TestCase):
             self.assertTrue(math.isclose(y, expected_y))
         except AssertionError:
             raise AssertionError('x: {} should be {}, y: {} should be {}'.format(x, expected_x, y, expected_y))
-    """
