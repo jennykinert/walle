@@ -75,12 +75,14 @@ class Robot:
         except NoPointObservableError:
             # Make the robot rotate til it sees points to go to
             current_angular_speed = self._communicator.get_angular_speed()
-            turn_speed = utils.sign(current_angular_speed) * self._MAX_TURNING_SPEED
+            turn_speed = utils.sign(current_angular_speed) * \
+                                                        self._MAX_TURNING_SPEED
             speed = 0
             if not self._turning_to_find_point:
                 self._turning_to_find_point = time()
             else:
-                if self._turning_to_find_point - time() > self._TURNING_TO_FIND_POINT_TIME:
+                if self._turning_to_find_point - time() > \
+                                    self._TURNING_TO_FIND_POINT_TIME:
                     raise NoPointObservableError()
 
         if abs(turn_speed) > self._MAX_TURNING_SPEED:
@@ -93,18 +95,20 @@ class Robot:
 
     def extend_start_position(self):
         """
-        Skip points on the path to make the starting point a small distance forward.
-        This is because the robot might make unecessary turning if the starting point
-        happen to be a small distance behind robot
+        Skip points on the path to make the starting point a small distance
+        forward. This is because the robot might make unecessary turning if the
+        starting point happen to be a small distance behind robot
         """
         EXTEND_DISTANCE = 1
         x, y = self._communicator.get_position()
         new_x, new_y = self._path.next()
 
-        if utils.distance_between_two_points(new_x, new_y, x, y) < EXTEND_DISTANCE:
+        if utils.distance_between_two_points(new_x, new_y, x, y) < \
+                                                        EXTEND_DISTANCE:
             while True:
                 new_x, new_y = self._path.next()
-                if utils.distance_between_two_points(x, y, new_x, new_y) > EXTEND_DISTANCE:
+                if utils.distance_between_two_points(x, y, new_x, new_y) > \
+                                                                EXTEND_DISTANCE:
                     break
         else:
             raise StartPointNotInRangeError()

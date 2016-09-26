@@ -30,7 +30,8 @@ class PathTracker:
 
         except EndOfPathError:
             x, y = self._path.get_last_position()
-            path_x, path_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+            path_x, path_y = utils.translate_coordinates_between_systems(x, y,
+                                                  robot_x, robot_y, robot_angle)
 
             if utils.distance_between_two_points(0, 0, path_x, path_y) < 1:
                 raise EndOfPathError('Within 1m of end of path')
@@ -38,8 +39,11 @@ class PathTracker:
             if not self._laser.check_if_circle_safe(path_x,path_y):
                 while True:
                     x, y = self._path.previous()
-                    translated_x, translated_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
-                    if self._laser.check_if_circle_safe(translated_x, translated_y):
+                    translated_x, translated_y = \
+                        utils.translate_coordinates_between_systems(x, y,
+                                            robot_x, robot_y, robot_angle)
+                    if self._laser.check_if_circle_safe(translated_x,
+                                                        translated_y):
                         path_x, path_y = translated_x, translated_y
                         break
 
@@ -51,7 +55,7 @@ class PathTracker:
 
 
     def get_turn_radius_inverse_to_point(self, x, y):
-        """Performs Pure Pursuit Algorithms formula to calculate radius inverse"""
+        """Performs Pure Pursuit Algorithm to calculate radius inverse"""
 
         L_adjusted = utils.distance_between_two_points(0, 0, x, y)
         angle = utils.angle_between_two_points(0, 0, x, y)
@@ -73,7 +77,8 @@ class PathTracker:
     def get_next_point(self, robot_x, robot_y, robot_angle):
         """
         Get next point to which is viable to travel to. Will base 
-        viability on that point must be visible and able to be traveled to without collision
+        viability on that point must be visible and able to be
+        traveled to without collision
         """
 
         backtracking = False
@@ -81,7 +86,9 @@ class PathTracker:
         while True:
 
             x, y = self._path.next()
-            translated_x, translated_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+            translated_x, translated_y = \
+                utils.translate_coordinates_between_systems(x, y,
+                                                robot_x, robot_y, robot_angle)
 
             if not self._laser.is_observable(translated_x,translated_y):
                 try:
@@ -96,7 +103,9 @@ class PathTracker:
         if backtracking:
             while True:
                 x, y = self._path.previous()
-                translated_x, translated_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+                translated_x, translated_y = \
+                    utils.translate_coordinates_between_systems(x, y,
+                                            robot_x, robot_y, robot_angle)
                 if self._laser.is_observable(translated_x, translated_y):
                     path_x, path_y = translated_x, translated_y
                     break
@@ -108,7 +117,9 @@ class PathTracker:
                 else:
                     try:
                         x, y = self._path.previous()
-                        path_x, path_y = utils.translate_coordinates_between_systems(x, y, robot_x, robot_y, robot_angle)
+                        path_x, path_y = \
+                            utils.translate_coordinates_between_systems(x, y,
+                                                robot_x, robot_y, robot_angle)
                     except EndOfPathError:
                         raise NoPointObservableError()
 

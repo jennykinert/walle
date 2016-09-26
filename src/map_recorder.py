@@ -32,7 +32,7 @@ def record(host, port):
                 last_position_data = positions[len(positions)-1]
                 last_x = last_position_data['Pose']['Position']['X']
                 last_y = last_position_data['Pose']['Position']['Y']
-                if distance_between_two_points(x, y, last_x, last_y) > 0.01: # == 1cm
+                if distance_between_two_points(x, y, last_x, last_y) > 0.01:#m
                     positions.append(position_data)
 
     except KeyboardInterrupt:

@@ -8,7 +8,8 @@ def main():
     Startup the robot based upon arguments. Blocking
     """
     if len(sys.argv) > 1 and \
-            (sys.argv[1] == '-h' or sys.argv[1] == '-help' or sys.argv[1] == '--help'):
+            (sys.argv[1] == '-h' or sys.argv[1] == '-help' \
+             or sys.argv[1] == '--help'):
         print('usage: {} path_to_track [host] [port]\n'.format(sys.argv[0]))
 
     else:

@@ -55,7 +55,7 @@ class Communicator:
 
         response = self.mrds.getresponse()
         status = response.status
-        response.read().decode('utf-8') # Read all data to be able to reuse connection
+        response.read().decode('utf-8') # Read all data to reuse connection
 
         if status == 204:
             return
@@ -72,7 +72,8 @@ class Communicator:
 
             if (response.status == 200):
                 laser_data = response.read()
-                self._laser_distances = json.loads(laser_data.decode('utf-8'))['Echoes']
+                self._laser_distances = json.loads(
+                                        laser_data.decode('utf-8'))['Echoes']
                 return self._laser_distances
             else:
                 return response
@@ -88,12 +89,14 @@ class Communicator:
             if (response.status == 200):
                 laser_data = response.read()
                 properties = json.loads(laser_data.decode('utf-8'))
-                beam_count = round((properties['EndAngle'] - properties['StartAngle'])/properties['AngleIncrement'])
+                beam_count = round((properties['EndAngle'] - 
+                        properties['StartAngle'])/properties['AngleIncrement'])
                 a = properties['StartAngle']
                 self._laser_angles = []
                 for i in range(beam_count):
                     self._laser_angles.append(a)
-                    a += self.get_laser_angle_increment(angle=properties['AngleIncrement'])
+                    a += self.get_laser_angle_increment(
+                                        angle=properties['AngleIncrement'])
 
                 return self._laser_angles
             else:
@@ -176,7 +179,8 @@ class Communicator:
             if response.status == 200:
                 angular_speed_data = response.read()
                 json_data = json.loads(angular_speed_data.decode('utf-8'))
-                self._angular_speed = json_data['Feedback']['CurrentAngularSpeed']
+                self._angular_speed = json_data['Feedback'] \
+                                               ['CurrentAngularSpeed']
                 return self._angular_speed
 
 

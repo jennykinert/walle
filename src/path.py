@@ -9,7 +9,8 @@ class Path:
 
     def __init__(self, path):
         """
-        Construct the path class. Reads the path file and extracts the information
+        Construct the path class. Reads the path file
+        and extracts the information
         """
         self.index = -1
 

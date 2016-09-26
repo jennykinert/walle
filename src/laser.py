@@ -37,19 +37,22 @@ class Laser:
             u1 = math.pi/2 + utils.sign(endy)*u0
             u2 = math.pi - u1 - angle
 
-            lt = math.sqrt(radius0**2 + radius_1**2 - radius0*radius_1*math.cos(u1))
+            lt = math.sqrt(radius0**2 + radius_1**2 -
+                           radius0*radius_1*math.cos(u1))
             t = u1*radius_1/lt
 
             if angle > t:
                 try:
                     length = radius0*math.cos(angle) + \
-                                math.sqrt((radius0*math.cos(angle))**2 + radius1**2 - radius0**2)
+                                math.sqrt((radius0*math.cos(angle))**2 +
+                                           radius1**2 - radius0**2)
                 except ValueError:
                     return False
             else:
                 try:
                     length = radius0*math.cos(angle) + \
-                                math.sqrt((radius0*math.cos(angle))**2 + radius_1**2 - radius0**2)
+                                math.sqrt((radius0*math.cos(angle))**2 +
+                                           radius_1**2 - radius0**2)
                 except ValueError:
                     return False
 
@@ -65,11 +68,12 @@ class Laser:
 
 
     def is_observable(self, point_x, point_y):
-        """Use lasers from robot to determine if the point is visible to the robot"""
+        """Use lasers from robot to determine if point is visible to robot"""
 
         robot_x, robot_y = 0, 0
         angle = utils.angle_between_two_points(robot_x,robot_y,point_x,point_y)
-        length = utils.distance_between_two_points(robot_x,robot_y,point_x,point_y)
+        length = utils.distance_between_two_points(robot_x,robot_y,
+                                                   point_x,point_y)
         laser_distances = self.communicator.get_laser_distances()
         increment = self.communicator.get_laser_angle_increment()
 

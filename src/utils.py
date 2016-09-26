@@ -58,7 +58,8 @@ def angle_difference(angle1, angle2):
 # Coordinates                    -
 # --------------------------------
 
-def translate_coordinates_between_systems(global_x, global_y, local_x, local_y, diff_angle):
+def translate_coordinates_between_systems(global_x, global_y, local_x, local_y, 
+                                          diff_angle):
     """
     Translate global_x and global_y from the world coordinate system to the
     local coordinate system defined by origin in local_x and local_y.
